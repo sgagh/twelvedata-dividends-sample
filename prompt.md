@@ -29,7 +29,7 @@ For each symbol from this list:
 - find string "dividend" in the loaded content, and if not found, skip file
 1. If there are no matched files, skip report
 2. Add report and matched files to the symbol result
-3. Load dividends for the symbol from the `/dividends_calendar` endpoint, restrict `start_date` and `end_date` based on input arguments, add the response to the symbol result.
+3. Load dividends for the symbol from the `/dividends_calendar` endpoint, restrict `start_date` and `end_date` based on input arguments, include the `exchange` parameter from the symbol info retrieved in step 1, add the response to the symbol result.
 4. Add symbol data to the result list
 
 After processing all symbols, export data to the JSON file with format explained below

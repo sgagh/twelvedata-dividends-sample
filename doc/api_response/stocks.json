@@ -1,0 +1,19 @@
+{
+    "data": [
+        {
+            "symbol": "AAME",
+            "name": "Atlantic American Corporation",
+            "currency": "USD",
+            "exchange": "NASDAQ",
+            "mic_code": "XNMS",
+            "country": "United States",
+            "type": "Common Stock",
+            "figi_code": "BBG000B9XB24",
+            "cfi_code": "ESVUFR",
+            "isin": "US0482091008",
+            "cusip": "request_access_via_add_ons"
+        }
+    ],
+    "count": 1,
+    "status": "ok"
+}

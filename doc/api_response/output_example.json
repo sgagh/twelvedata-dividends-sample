@@ -1,0 +1,43 @@
+[
+{
+  "ticker": "WASH",
+  "instrument_name": "Washington Trust Bancorp Inc.",
+  "exchange": "NASDAQ",
+  "dividends": [
+    {
+      "ex_date": "2025-07-01",
+      "amount": 0.56
+    },
+    {
+      "ex_date": "2025-04-01",
+      "amount": 0.56
+    },
+    {
+      "ex_date": "2025-01-02",
+      "amount": 0.56
+    }
+  ],
+  "sec_reports": [
+    {
+      "url": "https://www.sec.gov/Archives/edgar/data/737468/0000737468-25-000031-index.htm",
+      "filed_at": "2025-07-21",
+      "files": [
+        {
+          "url": "737468/000073746825000031/exhibit9912025q2.htm",
+          "type": "EX-99.1"
+        }
+      ]
+    },
+    {
+      "url": "https://www.sec.gov/Archives/edgar/data/737468/0000737468-25-000019-index.htm",
+      "filed_at": "2025-04-21",
+      "files": [
+        {
+          "url": "https://www.sec.gov/Archives/edgar/data/737468/000073746825000019/exhibit9912025q1.htm",
+          "type": "EX-99.1"
+        }
+      ]
+    }
+  ]
+}
+]

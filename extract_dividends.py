@@ -16,6 +16,7 @@ from typing import Dict, List, Optional
 
 import requests
 from dotenv import load_dotenv
+from faker import Faker
 
 # Load environment variables
 load_dotenv()
@@ -44,16 +45,21 @@ def setup_logging(debug: bool = False):
 # Configuration
 API_KEY = os.getenv('TWELVE_DATA_API_KEY')
 BASE_URL = 'https://api.twelvedata.com'
-SEC_BASE_URL = 'https://www.sec.gov/Archives/edgar/data/'
 
-# User agents for SEC requests
-USER_AGENTS = [
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:89.0) Gecko/20100101 Firefox/89.0'
-]
+# Initialize faker instance
+fake = Faker()
+
+def generate_random_user_agent() -> str:
+    """Generate a random user agent with fake name and email, similar to Go faker logic."""
+    # Generate random person data
+    first_name = fake.first_name()
+    last_name = fake.last_name()
+    email = fake.email()
+    
+    # Create user agent string (similar to Go example: FirstName LastName Email)
+    user_agent = f"{first_name} {last_name} {email}"
+    
+    return user_agent
 
 
 def load_symbols(filename: str) -> List[str]:
@@ -133,27 +139,30 @@ def get_symbol_info(symbol: str, logger: logging.Logger) -> Optional[Dict]:
     return result
 
 
-def get_sec_reports(symbol: str, start_date: str, end_date: str, logger: logging.Logger) -> List[Dict]:
+def get_sec_reports(symbol: str, start_date: str, end_date: str, exchange:str, logger: logging.Logger) -> List[Dict]:
     """Retrieve SEC reports from the /edgar_filings/archive endpoint."""
     logger.info(f"Getting SEC reports for {symbol}")
     
     params = {
         'symbol': symbol,
         'filled_from': start_date,
-        'filled_to': end_date
+        'filled_to': end_date,
+        'exchange': exchange,
+        'form_type': '8-K'
     }
     
     data = make_api_request('edgar_filings/archive', params, logger)
     
-    if not data or 'data' not in data:
+    # Edgar filings API returns data in 'values' array format as per documentation
+    if not data or 'values' not in data:
         logger.warning(f"No SEC reports found for {symbol}")
         return []
     
-    logger.debug(f"Found {len(data['data'])} SEC reports for {symbol}")
+    logger.debug(f"Found {len(data['values'])} SEC reports for {symbol}")
     
     reports = []
-    for i, report in enumerate(data['data']):
-        logger.debug(f"Processing report {i+1}/{len(data['data'])} for {symbol}")
+    for i, report in enumerate(data['values']):
+        logger.debug(f"Processing report {i+1}/{len(data['values'])} for {symbol}")
         
         if 'files' not in report:
             logger.debug(f"Report {i+1} has no files, skipping")
@@ -175,16 +184,14 @@ def get_sec_reports(symbol: str, start_date: str, end_date: str, logger: logging
                 logger.debug(f"File {j+1} has no URL, skipping")
                 continue
                 
-            # Construct full URL
-            full_url = SEC_BASE_URL + file_url
-            logger.debug(f"Checking file {j+1}/{len(htm_files)}: {full_url}")
+            # Use the full URL as provided by the API (no need to construct)
+            logger.debug(f"Checking file {j+1}/{len(htm_files)}: {file_url}")
             
             # Download and check content
-            if check_dividend_content(full_url, logger):
+            if check_dividend_content(file_url, logger):
                 matched_files.append({
-                    'url': full_url,
-                    'type': file_info.get('type', ''),
-                    'mime': file_info.get('mime', 'text/html')
+                    'url': file_url,
+                    'type': file_info.get('type', '')
                 })
                 logger.debug(f"File {j+1} contains dividend content, added to results")
             else:
@@ -192,9 +199,13 @@ def get_sec_reports(symbol: str, start_date: str, end_date: str, logger: logging
         
         # Only include reports with matched files
         if matched_files:
+            # Convert timestamp to date string
+            filed_at_timestamp = report.get('filed_at', 0)
+            filed_at_date = datetime.fromtimestamp(filed_at_timestamp).strftime('%Y-%m-%d') if filed_at_timestamp else ''
+            
             reports.append({
-                'url': report.get('url', ''),
-                'filed_at': report.get('filed_at', ''),
+                'url': report.get('filing_url', ''),
+                'filed_at': filed_at_date,
                 'files': matched_files
             })
             logger.debug(f"Report {i+1} added with {len(matched_files)} matching files")
@@ -208,7 +219,9 @@ def get_sec_reports(symbol: str, start_date: str, end_date: str, logger: logging
 def check_dividend_content(url: str, logger: logging.Logger) -> bool:
     """Check if a file contains the word 'dividend'."""
     try:
-        headers = {'User-Agent': random.choice(USER_AGENTS)}
+        # Generate a random user agent for this request
+        user_agent = generate_random_user_agent()
+        headers = {'User-Agent': user_agent}
         logger.debug(f"Downloading content from: {url}")
         logger.debug(f"Using User-Agent: {headers['User-Agent']}")
         
@@ -222,7 +235,7 @@ def check_dividend_content(url: str, logger: logging.Logger) -> bool:
         response.raise_for_status()
         
         # Add delay after each request
-        delay = random.uniform(1, 3)
+        delay = 1.0
         logger.debug(f"Adding delay of {delay:.2f} seconds")
         time.sleep(delay)
         
@@ -258,15 +271,27 @@ def get_dividends(symbol: str, start_date: str, end_date: str, exchange: str, lo
     
     data = make_api_request('dividends_calendar', params, logger)
     
-    if not data or 'data' not in data:
+    # Dividends calendar API returns a flat array as per documentation
+    if not data or not isinstance(data, list):
         logger.warning(f"No dividends found for {symbol}")
         return []
     
-    dividends = data['data'] if isinstance(data['data'], list) else [data['data']]
-    logger.info(f"Found {len(dividends)} dividend records for {symbol}")
-    logger.debug(f"Dividend data for {symbol}: {dividends}")
+    # Filter dividends to match the symbol (API might return multiple symbols)
+    symbol_dividends = [d for d in data if d.get('symbol') == symbol]
     
-    return dividends
+    # Filter fields to match the expected format (only ex_date, amount)
+    filtered_dividends = []
+    for dividend in symbol_dividends:
+        filtered_dividend = {
+            'ex_date': dividend.get('ex_date', ''),
+            'amount': dividend.get('amount', 0)
+        }
+        filtered_dividends.append(filtered_dividend)
+    
+    logger.info(f"Found {len(filtered_dividends)} dividend records for {symbol}")
+    logger.debug(f"Dividend data for {symbol}: {filtered_dividends}")
+    
+    return filtered_dividends
 
 
 def process_symbol(symbol: str, start_date: str, end_date: str, logger: logging.Logger) -> Optional[Dict]:
@@ -280,7 +305,7 @@ def process_symbol(symbol: str, start_date: str, end_date: str, logger: logging.
         return None
     
     # Get SEC reports
-    sec_reports = get_sec_reports(symbol, start_date, end_date, logger)
+    sec_reports = get_sec_reports(symbol, start_date, end_date, symbol_info['exchange'], logger)
     
     # Get dividends
     dividends = get_dividends(symbol, start_date, end_date, symbol_info['exchange'], logger)

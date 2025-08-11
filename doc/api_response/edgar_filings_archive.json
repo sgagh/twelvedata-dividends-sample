@@ -1,0 +1,163 @@
+{
+    "meta": {
+        "symbol": "AAME",
+        "exchange": "NASDAQ",
+        "mic_code": "XNMS",
+        "type": "Common Stock"
+    },
+    "values": [
+        {
+            "cik": 8177,
+            "filed_at": 1747267200,
+            "files": [
+                {
+                    "name": "ef20049145_8k.htm",
+                    "size": 46759,
+                    "type": "8-K",
+                    "url": "https://www.sec.gov/ix?doc=/Archives/edgar/data/8177/000114036125019287/ef20049145_8k.htm"
+                },
+                {
+                    "name": "0001140361-25-019287.txt",
+                    "size": 183615,
+                    "type": "archive_file",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125019287/0001140361-25-019287.txt"
+                },
+                {
+                    "name": "aame-20250513.xsd",
+                    "size": 3973,
+                    "type": "EX-101.SCH",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125019287/aame-20250513.xsd"
+                },
+                {
+                    "name": "aame-20250513_lab.xml",
+                    "size": 21966,
+                    "type": "EX-101.LAB",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125019287/aame-20250513_lab.xml"
+                },
+                {
+                    "name": "aame-20250513_pre.xml",
+                    "size": 16038,
+                    "type": "EX-101.PRE",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125019287/aame-20250513_pre.xml"
+                },
+                {
+                    "name": "ef20049145_8k_htm.xml",
+                    "size": 4224,
+                    "type": "XML",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125019287/ef20049145_8k_htm.xml"
+                }
+            ],
+            "filing_url": "https://www.sec.gov/Archives/edgar/data/8177/0001140361-25-019287-index.htm",
+            "form_type": "8-K",
+            "ticker": [
+                "AAME"
+            ]
+        },
+        {
+            "cik": 8177,
+            "filed_at": 1747094400,
+            "files": [
+                {
+                    "name": "ef20048754_8k.htm",
+                    "size": 30566,
+                    "type": "8-K",
+                    "url": "https://www.sec.gov/ix?doc=/Archives/edgar/data/8177/000114036125018583/ef20048754_8k.htm"
+                },
+                {
+                    "name": "ef20048754_ex99-1.htm",
+                    "size": 118078,
+                    "type": "EX-99.1",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125018583/ef20048754_ex99-1.htm"
+                },
+                {
+                    "name": "0001140361-25-018583.txt",
+                    "size": 291838,
+                    "type": "archive_file",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125018583/0001140361-25-018583.txt"
+                },
+                {
+                    "name": "aame-20250513.xsd",
+                    "size": 3973,
+                    "type": "EX-101.SCH",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125018583/aame-20250513.xsd"
+                },
+                {
+                    "name": "aame-20250513_lab.xml",
+                    "size": 21966,
+                    "type": "EX-101.LAB",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125018583/aame-20250513_lab.xml"
+                },
+                {
+                    "name": "aame-20250513_pre.xml",
+                    "size": 16038,
+                    "type": "EX-101.PRE",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125018583/aame-20250513_pre.xml"
+                },
+                {
+                    "name": "ef20048754_8k_htm.xml",
+                    "size": 4065,
+                    "type": "XML",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125018583/ef20048754_8k_htm.xml"
+                }
+            ],
+            "filing_url": "https://www.sec.gov/Archives/edgar/data/8177/0001140361-25-018583-index.htm",
+            "form_type": "8-K",
+            "ticker": [
+                "AAME"
+            ]
+        },
+        {
+            "cik": 8177,
+            "filed_at": 1742860800,
+            "files": [
+                {
+                    "name": "ef20046026_8k.htm",
+                    "size": 29664,
+                    "type": "8-K",
+                    "url": "https://www.sec.gov/ix?doc=/Archives/edgar/data/8177/000114036125010215/ef20046026_8k.htm"
+                },
+                {
+                    "name": "ef20046026_ex99-1.htm",
+                    "size": 169059,
+                    "type": "EX-99.1",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125010215/ef20046026_ex99-1.htm"
+                },
+                {
+                    "name": "0001140361-25-010215.txt",
+                    "size": 343124,
+                    "type": "archive_file",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125010215/0001140361-25-010215.txt"
+                },
+                {
+                    "name": "aame-20250325.xsd",
+                    "size": 3973,
+                    "type": "EX-101.SCH",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125010215/aame-20250325.xsd"
+                },
+                {
+                    "name": "aame-20250325_lab.xml",
+                    "size": 21966,
+                    "type": "EX-101.LAB",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125010215/aame-20250325_lab.xml"
+                },
+                {
+                    "name": "aame-20250325_pre.xml",
+                    "size": 16038,
+                    "type": "EX-101.PRE",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125010215/aame-20250325_pre.xml"
+                },
+                {
+                    "name": "ef20046026_8k_htm.xml",
+                    "size": 4065,
+                    "type": "XML",
+                    "url": "https://www.sec.gov/Archives/edgar/data/8177/000114036125010215/ef20046026_8k_htm.xml"
+                }
+            ],
+            "filing_url": "https://www.sec.gov/Archives/edgar/data/8177/0001140361-25-010215-index.htm",
+            "form_type": "8-K",
+            "ticker": [
+                "AAME"
+            ]
+        }
+    ]
+}

@@ -21,7 +21,7 @@ First of all, load all symbols that have dividends from symbols.txt.
 
 For each symbol from this list:
 1. Retrieve symbol info from the `/stocks` endpoint. If the result is empty, skip this ticker. Remember instrument name and exchange from the response.
-2. Retrieve symbol SEC reports from the `/edgar_filings/archive` endpoint, restrict `filled_from` and `filled_to` based on input arguments.
+2. Retrieve symbol SEC reports from the `/edgar_filings/archive` endpoint, restrict `filled_from` and `filled_to` based on input arguments, and filter for form type 8-K (`form_type=8-K`).
 3. For each report, analyze related files: 
 - process only files with path ending ".htm"
 - add the base url `https://www.sec.gov/Archives/edgar/data/` to the file url
@@ -44,23 +44,14 @@ After processing all symbols, export data to the JSON file with format explained
   "exchange": "NASDAQ",
   "dividends": [
     {
-      "symbol": "WASH",
-      "mic_code": "XNGS",
-      "exchange": "NASDAQ",
       "ex_date": "2025-07-01",
       "amount": 0.56
     },
     {
-      "symbol": "WASH",
-      "mic_code": "XNGS",
-      "exchange": "NASDAQ",
       "ex_date": "2025-04-01",
       "amount": 0.56
     },
     {
-      "symbol": "WASH",
-      "mic_code": "XNGS",
-      "exchange": "NASDAQ",
       "ex_date": "2025-01-02",
       "amount": 0.56
     }
@@ -72,8 +63,7 @@ After processing all symbols, export data to the JSON file with format explained
       "files": [
         {
           "url": "737468/000073746825000031/exhibit9912025q2.htm",
-          "type": "EX-99.1",
-          "mime": "text/html"
+          "type": "EX-99.1"
         }
       ]
     },
@@ -83,8 +73,7 @@ After processing all symbols, export data to the JSON file with format explained
       "files": [
         {
           "url": "https://www.sec.gov/Archives/edgar/data/737468/000073746825000019/exhibit9912025q1.htm",
-          "type": "EX-99.1",
-          "mime": "text/html"
+          "type": "EX-99.1"
         }
       ]
     }

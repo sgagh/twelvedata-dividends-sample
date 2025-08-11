@@ -191,6 +191,7 @@ def get_sec_reports(symbol: str, start_date: str, end_date: str, exchange:str, l
             if not file_url:
                 logger.debug(f"File {j+1} has no URL, skipping")
                 continue
+            file_url = file_url.replace("/ix?doc=/Archives", "/Archives")
                 
             # Use the full URL as provided by the API (no need to construct)
             logger.debug(f"Checking file {j+1}/{len(htm_files)}: {file_url}")
@@ -317,9 +318,13 @@ def process_symbol(symbol: str, exchange: str, start_date: str, end_date: str, l
     
     # Get SEC reports
     sec_reports = get_sec_reports(symbol, start_date, end_date, actual_exchange, logger)
+    if not sec_reports:
+        return None
     
     # Get dividends
     dividends = get_dividends(symbol, start_date, end_date, actual_exchange, logger)
+    if not dividends:
+        return None
     
     result = {
         'ticker': symbol,

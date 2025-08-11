@@ -5,6 +5,7 @@ and creating a sample JSON file.
 """
 
 import argparse
+import csv
 import json
 import logging
 import os
@@ -12,7 +13,7 @@ import random
 import re
 import time
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import requests
 from dotenv import load_dotenv
@@ -62,10 +63,16 @@ def generate_random_user_agent() -> str:
     return user_agent
 
 
-def load_symbols(filename: str) -> List[str]:
-    """Load symbols from the symbols.txt file."""
+def load_symbols(filename: str) -> List[Tuple[str, str]]:
+    """Load symbols and exchanges from the symbols.csv file."""
+    symbols = []
     with open(filename, 'r') as file:
-        symbols = [line.strip() for line in file if line.strip()]
+        csv_reader = csv.DictReader(file)
+        for row in csv_reader:
+            symbol = row['symbol_ticker'].strip()
+            exchange = row['exchange'].strip()
+            if symbol and exchange:
+                symbols.append((symbol, exchange))
     return symbols
 
 
@@ -118,21 +125,22 @@ def make_api_request(endpoint: str, params: Dict, logger: logging.Logger) -> Opt
         return None
 
 
-def get_symbol_info(symbol: str, logger: logging.Logger) -> Optional[Dict]:
+def get_symbol_info(symbol: str, exchange: str, logger: logging.Logger) -> Optional[Dict]:
     """Retrieve symbol info from the /stocks endpoint."""
-    logger.info(f"Getting symbol info for {symbol}")
+    logger.info(f"Getting symbol info for {symbol} on {exchange}")
     
-    data = make_api_request('stocks', {'symbol': symbol}, logger)
+    params = {'symbol': symbol, 'exchange': exchange}
+    data = make_api_request('stocks', params, logger)
     
     if not data or 'data' not in data or not data['data']:
-        logger.warning(f"No data found for symbol {symbol}")
+        logger.warning(f"No data found for symbol {symbol} on {exchange}")
         return None
     
     stock_data = data['data'][0] if isinstance(data['data'], list) else data['data']
     
     result = {
         'name': stock_data.get('name', ''),
-        'exchange': stock_data.get('exchange', '')
+        'exchange': stock_data.get('exchange', exchange)  # Use provided exchange as fallback
     }
     
     logger.debug(f"Symbol info for {symbol}: {result}")
@@ -294,26 +302,29 @@ def get_dividends(symbol: str, start_date: str, end_date: str, exchange: str, lo
     return filtered_dividends
 
 
-def process_symbol(symbol: str, start_date: str, end_date: str, logger: logging.Logger) -> Optional[Dict]:
+def process_symbol(symbol: str, exchange: str, start_date: str, end_date: str, logger: logging.Logger) -> Optional[Dict]:
     """Process a single symbol and return its data."""
-    logger.info(f"Processing symbol: {symbol}")
+    logger.info(f"Processing symbol: {symbol} on {exchange}")
     
     # Get symbol info
-    symbol_info = get_symbol_info(symbol, logger)
+    symbol_info = get_symbol_info(symbol, exchange, logger)
     if not symbol_info:
         logger.warning(f"Skipping {symbol} - no symbol info found")
         return None
     
+    # Use the exchange from symbol_info (which uses CSV exchange as fallback)
+    actual_exchange = symbol_info['exchange']
+    
     # Get SEC reports
-    sec_reports = get_sec_reports(symbol, start_date, end_date, symbol_info['exchange'], logger)
+    sec_reports = get_sec_reports(symbol, start_date, end_date, actual_exchange, logger)
     
     # Get dividends
-    dividends = get_dividends(symbol, start_date, end_date, symbol_info['exchange'], logger)
+    dividends = get_dividends(symbol, start_date, end_date, actual_exchange, logger)
     
     result = {
         'ticker': symbol,
         'instrument_name': symbol_info['name'],
-        'exchange': symbol_info['exchange'],
+        'exchange': actual_exchange,
         'dividends': dividends,
         'sec_reports': sec_reports
     }
@@ -353,11 +364,11 @@ def main():
     
     # Load symbols
     try:
-        symbols = load_symbols('symbols.txt')
-        logger.info(f"Loaded {len(symbols)} symbols from symbols.txt")
+        symbols = load_symbols('symbols.csv')
+        logger.info(f"Loaded {len(symbols)} symbols from symbols.csv")
         logger.debug(f"First 10 symbols: {symbols[:10]}")
     except FileNotFoundError:
-        logger.error("symbols.txt file not found")
+        logger.error("symbols.csv file not found")
         return 1
     
     # Apply limit if specified
@@ -370,11 +381,11 @@ def main():
     successful_count = 0
     failed_count = 0
     
-    for i, symbol in enumerate(symbols, 1):
-        logger.info(f"Progress: {i}/{len(symbols)} - Processing {symbol}")
+    for i, (symbol, exchange) in enumerate(symbols, 1):
+        logger.info(f"Progress: {i}/{len(symbols)} - Processing {symbol} on {exchange}")
         
         try:
-            symbol_data = process_symbol(symbol, args.start_date, args.end_date, logger)
+            symbol_data = process_symbol(symbol, exchange, args.start_date, args.end_date, logger)
             if symbol_data:
                 results.append(symbol_data)
                 successful_count += 1

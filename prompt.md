@@ -17,7 +17,8 @@ The script should accept the following arguments:
 - end_date (required)- end date for API requests
 - limit (not required, default 0) - limit symbols for processing
 
-First of all, load all symbols that have dividends from symbols.txt.
+First of all, load all symbols that have dividends from symbols.csv.
+Use symbol name and exchange name from the loaded data.
 
 For each symbol from this list:
 1. Retrieve symbol info from the `/stocks` endpoint. If the result is empty, skip this ticker. Remember instrument name and exchange from the response.

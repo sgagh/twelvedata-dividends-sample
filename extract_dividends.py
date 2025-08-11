@@ -245,14 +245,15 @@ def check_dividend_content(url: str, logger: logging.Logger) -> bool:
         return False
 
 
-def get_dividends(symbol: str, start_date: str, end_date: str, logger: logging.Logger) -> List[Dict]:
+def get_dividends(symbol: str, start_date: str, end_date: str, exchange: str, logger: logging.Logger) -> List[Dict]:
     """Load dividends for the symbol from the /dividends_calendar endpoint."""
     logger.info(f"Getting dividends for {symbol}")
     
     params = {
         'symbol': symbol,
         'start_date': start_date,
-        'end_date': end_date
+        'end_date': end_date,
+        'exchange': exchange
     }
     
     data = make_api_request('dividends_calendar', params, logger)
@@ -282,7 +283,7 @@ def process_symbol(symbol: str, start_date: str, end_date: str, logger: logging.
     sec_reports = get_sec_reports(symbol, start_date, end_date, logger)
     
     # Get dividends
-    dividends = get_dividends(symbol, start_date, end_date, logger)
+    dividends = get_dividends(symbol, start_date, end_date, symbol_info['exchange'], logger)
     
     result = {
         'ticker': symbol,
